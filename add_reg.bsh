@@ -51,7 +51,7 @@ save_regulatory $reg_bt_bin_32_path
 save_regulatory $reg_bt_bin_64_path
 save_regulatory $reg_ka_bin_32_path
 save_regulatory $reg_ka_bin_64_path
-cp "$USER.key.pub.pem" "../$crda_path/pubkeys/"
+cp "*.pem" "../$crda_path/pubkeys/"
 echo
 
 echo "Building CRDA with the new certificates from wireless-regdb."
