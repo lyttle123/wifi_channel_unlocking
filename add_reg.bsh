@@ -1,6 +1,6 @@
 #!/bin/bash
 
-crda_path="crda-1.1.3"
+crda_path="crda"
 reg_bin="regulatory.bin"
 system_crda_path="/usr/lib/crda"
 reg_bt_bin_32_path="$system_crda_path/$reg_bin"
