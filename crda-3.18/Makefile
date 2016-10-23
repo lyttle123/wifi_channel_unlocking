@@ -26,7 +26,7 @@ PUBKEY_DIR?=pubkeys
 RUNTIME_PUBKEY_DIR?=/etc/wireless-regdb/pubkeys
 
 CFLAGS += -O2 -fpic
-CFLAGS += -std=gnu99 -Wall -Werror -pedantic
+CFLAGS += -std=gnu99 -Wall -pedantic
 CFLAGS += -Wall -g
 LDLIBREG += -lreg
 LDLIBS += $(LDLIBREG)
