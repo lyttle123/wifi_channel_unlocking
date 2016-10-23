@@ -1,6 +1,6 @@
 # Modify as you see fit, note this is built into crda,
 # so if you change it here you will have to change crda.c
-REG_BIN?=/usr/lib/crda/regulatory.bin
+REG_BIN?=/lib/crda/regulatory.bin
 REG_GIT?=git://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git
 
 PREFIX ?= /usr/
