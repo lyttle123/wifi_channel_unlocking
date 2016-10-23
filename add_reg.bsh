@@ -32,14 +32,35 @@ if [ "$?" -eq "1" ]; then
      exit
 fi
 
-echo -ne "make....."
-if ! hash make 2>/dev/null; then
-echo -e "Not installed"
-exit
-else
-echo -e "OK!"
+dpkg -s python-m2crypto &> /dev/null
+if [ "$?" -eq "1" ]; then
+     echo "python-m2crypto is not installed, quitting.  Pleast install that before continuing."
+     exit
 fi
 
+dpkg -s gcc &> /dev/null
+if [ "$?" -eq "1" ]; then
+     echo "gcc is not installed, quitting.  Pleast install that before continuing."
+     exit
+fi
+
+dpkg -s make &> /dev/null
+if [ "$?" -eq "1" ]; then
+     echo "make is not installed, quitting.  Pleast install that before continuing."
+     exit
+fi
+
+dpkg -s pkg-config &> /dev/null
+if [ "$?" -eq "1" ]; then
+     echo "pkg-config is not installed, quitting.  Pleast install that before continuing."
+     exit
+fi
+
+dpkg -s libnl-genl-3-dev &> /dev/null
+if [ "$?" -eq "1" ]; then
+     echo "libnl-genl-3-dev is not installed, quitting.  Pleast install that before continuing."
+     exit
+fi
 
 echo "Building wireless-regdb with the modified db.txt."
 cd "./wireless-regdb"
