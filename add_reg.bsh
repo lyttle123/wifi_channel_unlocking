@@ -32,6 +32,15 @@ if [ "$?" -eq "1" ]; then
      exit
 fi
 
+echo -ne "make....."
+if ! hash make 2>/dev/null; then
+echo -e "Not installed"
+exit
+else
+echo -e "OK!"
+fi
+
+
 echo "Building wireless-regdb with the modified db.txt."
 cd "./wireless-regdb"
 make
