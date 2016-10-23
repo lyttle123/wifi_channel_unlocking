@@ -71,6 +71,7 @@ fi
 echo "Building wireless-regdb with the modified db.txt."
 cd "./wireless-regdb"
 make
+cp -v *.pem "../$crda_path/pubkeys/"
 echo
 
 if [ -e $reg_ka_32_path ] || [ -e $reg_ka_64_path ]; then
@@ -87,7 +88,6 @@ save_regulatory $reg_bt_bin_32_path
 save_regulatory $reg_bt_bin_64_path
 save_regulatory $reg_ka_bin_32_path
 save_regulatory $reg_ka_bin_64_path
-cp "*.pem" "../$crda_path/pubkeys/"
 echo
 
 echo "Building CRDA with the new certificates from wireless-regdb."
