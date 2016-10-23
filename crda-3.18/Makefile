@@ -1,10 +1,12 @@
 # Modify as you see fit, note this is built into crda,
 # so if you change it here you will have to change crda.c
 REG_BIN?=/usr/lib/crda/regulatory.bin
-REG_GIT?=git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-regdb.git
+REG_GIT?=git://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git
 
 PREFIX ?= /usr/
 MANDIR ?= $(PREFIX)/share/man/
+INCLUDE_DIR ?= $(PREFIX)/include/reglib/
+LIBDIR ?= $(PREFIX)/lib
 
 SBINDIR ?= /sbin/
 
@@ -23,23 +25,30 @@ UDEV_RULE_DIR?=/lib/udev/rules.d/
 PUBKEY_DIR?=pubkeys
 RUNTIME_PUBKEY_DIR?=/etc/wireless-regdb/pubkeys
 
+CFLAGS += -O2 -fpic
+CFLAGS += -std=gnu99 -Wall -Werror -pedantic
 CFLAGS += -Wall -g
+LDLIBREG += -lreg
+LDLIBS += $(LDLIBREG)
+LDLIBS += -lm
+LIBREG += libreg.so
+LDFLAGS += -L ./
 
 all: all_noverify verify
 
-all_noverify: crda intersect regdbdump
+all_noverify: $(LIBREG) crda intersect regdbdump db2rd optimize
 
 ifeq ($(USE_OPENSSL),1)
 CFLAGS += -DUSE_OPENSSL -DPUBKEY_DIR=\"$(RUNTIME_PUBKEY_DIR)\" `pkg-config --cflags openssl`
 LDLIBS += `pkg-config --libs openssl`
 
-reglib.o: keys-ssl.c
+$(LIBREG): keys-ssl.c
 
 else
 CFLAGS += -DUSE_GCRYPT
 LDLIBS += -lgcrypt
 
-reglib.o: keys-gcrypt.c
+$(LIBREG): keys-gcrypt.c
 
 endif
 MKDIR ?= mkdir -p
@@ -105,31 +114,56 @@ keys-%.c: utils/key2pub.py $(wildcard $(PUBKEY_DIR)/*.pem)
 	$(NQ) '  Trusted pubkeys:' $(wildcard $(PUBKEY_DIR)/*.pem)
 	$(Q)./utils/key2pub.py --$* $(wildcard $(PUBKEY_DIR)/*.pem) $@
 
-%.o: %.c regdb.h reglib.h
+$(LIBREG): regdb.h reglib.h reglib.c
+	$(NQ) '  CC  ' $@
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -shared -Wl,-soname,$(LIBREG) $^
+
+install-libreg-headers:
+	$(NQ) '  INSTALL  libreg-headers'
+	$(Q)mkdir -p $(DESTDIR)/$(INCLUDE_DIR)
+	$(Q)cp *.h $(DESTDIR)/$(INCLUDE_DIR)/
+
+install-libreg:
+	$(NQ) '  INSTALL  libreg'
+	$(Q)mkdir -p $(DESTDIR)/$(LIBDIR)
+	$(Q)cp $(LIBREG) $(DESTDIR)/$(LIBDIR)/
+	$(Q)ldconfig
+
+%.o: %.c regdb.h $(LIBREG)
 	$(NQ) '  CC  ' $@
 	$(Q)$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
-crda: reglib.o crda.o
+crda: crda.o
 	$(NQ) '  LD  ' $@
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(NLLIBS)
 
-regdbdump: reglib.o regdbdump.o print-regdom.o
+regdbdump: regdbdump.o
 	$(NQ) '  LD  ' $@
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
-intersect: reglib.o intersect.o print-regdom.o
+intersect: intersect.o
+	$(NQ) '  LD  ' $@
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+db2rd: db2rd.o
+	$(NQ) '  LD  ' $@
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+optimize: optimize.o
 	$(NQ) '  LD  ' $@
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 verify: $(REG_BIN) regdbdump
 	$(NQ) '  CHK  $(REG_BIN)'
-	$(Q)./regdbdump $(REG_BIN) >/dev/null
+	$(Q)\
+		LD_LIBRARY_PATH=.:$(LD_LIBRARY_PATH) \
+		./regdbdump $(REG_BIN) >/dev/null
 
 %.gz: %
 	@$(NQ) ' GZIP' $<
 	$(Q)gzip < $< > $@
 
-install: crda crda.8.gz regdbdump.8.gz
+install: install-libreg install-libreg-headers crda crda.8.gz regdbdump.8.gz
 	$(NQ) '  INSTALL  crda'
 	$(Q)$(MKDIR) $(DESTDIR)/$(SBINDIR)
 	$(Q)$(INSTALL) -m 755 -t $(DESTDIR)/$(SBINDIR) crda
@@ -152,5 +186,6 @@ install: crda crda.8.gz regdbdump.8.gz
 	$(Q)$(INSTALL) -m 644 -t $(DESTDIR)/$(MANDIR)/man8/ regdbdump.8.gz
 
 clean:
-	$(Q)rm -f crda regdbdump intersect *.o *~ *.pyc keys-*.c *.gz \
+	$(Q)rm -f $(LIBREG) crda regdbdump intersect db2rd optimize \
+		*.o *~ *.pyc keys-*.c *.gz \
 	udev/$(UDEV_LEVEL)regulatory.rules udev/regulatory.rules.parsed

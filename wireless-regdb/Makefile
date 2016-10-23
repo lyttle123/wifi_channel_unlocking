@@ -1,7 +1,7 @@
 # Install prefix
 PREFIX ?= /usr
 CRDA_PATH ?= $(PREFIX)/lib/crda
-CRDA_KEY_PATH ?= /etc/wireless-regdb/pubkeys/
+CRDA_KEY_PATH ?= $(CRDA_PATH)/pubkeys
 
 MANDIR ?= $(PREFIX)/share/man/
 
@@ -32,18 +32,16 @@ REGDB_AUTHOR ?= $(shell if [ -f $(DISTRO_PRIVKEY) ]; then \
 REGDB_PRIVKEY ?= ~/.wireless-regdb-$(REGDB_AUTHOR).key.priv.pem
 REGDB_PUBKEY ?= $(REGDB_AUTHOR).key.pub.pem
 
-REGDB_UPSTREAM_PUBKEY ?= linville.key.pub.pem
+REGDB_UPSTREAM_PUBKEY ?= sforshee.key.pub.pem
 
-REGDB_CHANGED = $(shell $(SHA1SUM) -c --status sha1sum.txt; \
-        if [ $$? -eq 0 ]; then \
-                echo ; \
-        else \
+REGDB_CHANGED = $(shell $(SHA1SUM) -c --status sha1sum.txt >/dev/null 2>&1; \
+        if [ $$? -ne 0 ]; then \
                 echo maintainer-clean $(REGDB_PUBKEY); \
         fi)
 
 .PHONY: all clean mrproper install maintainer-clean install-distro-key
 
-all: $(REGDB_CHANGED) regulatory.bin
+all: $(REGDB_CHANGED) regulatory.bin sha1sum.txt
 
 clean:
 	@rm -f *.pyc *.gz
@@ -58,6 +56,9 @@ mrproper: clean maintainer-clean
 regulatory.bin: db.txt $(REGDB_PRIVKEY) $(REGDB_PUBKEY)
 	@echo Generating $@ digitally signed by $(REGDB_AUTHOR)...
 	./db2bin.py regulatory.bin db.txt $(REGDB_PRIVKEY)
+
+sha1sum.txt: db.txt
+	sha1sum $< > $@
 
 $(REGDB_PUBKEY): $(REGDB_PRIVKEY)
 	@echo "Generating public key for $(REGDB_AUTHOR)..."
@@ -102,7 +103,6 @@ install: regulatory.bin.5.gz
 	if [ -f .custom ]; then \
 		install -m 644 -t $(DESTDIR)/$(CRDA_KEY_PATH)/ $(shell cat .custom); \
 	fi
-	@# In linville we trust
 	install -m 644 -t $(DESTDIR)/$(CRDA_KEY_PATH)/ $(REGDB_UPSTREAM_PUBKEY)
 	install -m 644 -t $(DESTDIR)/$(CRDA_PATH)/ regulatory.bin
 	install -m 755 -d $(DESTDIR)/$(MANDIR)/man5/

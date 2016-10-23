@@ -1,6 +1,6 @@
 #!/bin/bash
 
-crda_path="crda"
+crda_path="crda-3.18"
 reg_bin="regulatory.bin"
 system_crda_path="/usr/lib/crda"
 reg_bt_bin_32_path="$system_crda_path/$reg_bin"
@@ -26,9 +26,9 @@ function create_link {
      fi
 }
 
-dpkg -s libnl-dev &> /dev/null
+dpkg -s libnl-3-dev &> /dev/null
 if [ "$?" -eq "1" ]; then
-     echo "libnl-dev is not installed, quitting.  Pleast install that before continuing."
+     echo "libnl-3-dev is not installed, quitting.  Pleast install that before continuing."
      exit
 fi
 
