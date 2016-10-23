@@ -26,6 +26,12 @@ function create_link {
      fi
 }
 
+dpkg -s libgcrypt20-dev &> /dev/null
+if [ "$?" -eq "1" ]; then
+     echo "libgcrypt20-dev is not installed, quitting.  Pleast install that before continuing."
+     exit
+fi
+
 dpkg -s libnl-3-dev &> /dev/null
 if [ "$?" -eq "1" ]; then
      echo "libnl-3-dev is not installed, quitting.  Pleast install that before continuing."
