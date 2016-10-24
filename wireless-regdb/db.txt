@@ -135,22 +135,9 @@ country BF: DFS-FCC
 #
 # Note: The transmit power limits in the 5250-5350 MHz and 5470-5725 MHz bands
 # can be raised by 3 dBm if TPC is enabled. Refer to BDS EN 301 893 for details.
-country BG: DFS-ETSI
-	# Wideband data transmission systems (WDTS) in the 2.4GHz ISM band, ref:
-	# I.22 of the List, BDS EN 300 328
-	(2402 - 2482 @ 40), (20)
-	# 5 GHz Radio Local Area Networks (RLANs), ref:
-	# II.H01 of the List, BDS EN 301 893
-	(5170 - 5250 @ 80), (23), AUTO-BW
-	(5250 - 5330 @ 80), (20), DFS, AUTO-BW
-	# II.H01 of the List, I.54 from the List, BDS EN 301 893
-	(5490 - 5710 @ 160), (27), DFS
-	# Short range devices (SRDs) in the 5725-5875 MHz frequency range, ref:
-	# I.43 of the List, BDS EN 300 440-2, BDS EN 300 440-1
-	(5725 - 5875 @ 80), (14)
-	# 60 GHz Multiple-Gigabit RLAN Systems, ref:
-	# II.H03 of the List, BDS EN 302 567-2
-	(57000 - 66000 @ 2160), (40), NO-OUTDOOR
+country BG:
+	(2402 - 2494 @ 40), (33)
+	(4910 - 6090 @ 40), (33)
 
 country BH: DFS-JP
 	(2402 - 2482 @ 40), (20)
@@ -252,17 +239,10 @@ country CL: DFS-JP
 	(5250 - 5330 @ 80), (20), DFS, AUTO-BW
 	(5735 - 5835 @ 80), (20)
 
-country CN: DFS-FCC
-	(2402 - 2482 @ 40), (20)
-	(5170 - 5250 @ 80), (23), AUTO-BW
-	(5250 - 5330 @ 80), (23), DFS, AUTO-BW
-	(5735 - 5835 @ 80), (30)
-	# 60 GHz band channels 1,4: 28dBm, channels 2,3: 44dBm
-	# ref: http://www.miit.gov.cn/n11293472/n11505629/n11506593/n11960250/n11960606/n11960700/n12330791.files/n12330790.pdf
-	(57240 - 59400 @ 2160), (28)
-	(59400 - 63720 @ 2160), (44)
-	(63720 - 65880 @ 2160), (28)
-
+country CN:
+	(2402 - 2494 @ 40), (33)
+	(4910 - 6090 @ 40), (33)
+	
 country CO: DFS-FCC
 	(2402 - 2482 @ 40), (20)
 	(5170 - 5250 @ 80), (17), AUTO-BW
@@ -337,15 +317,9 @@ country CZ: DFS-ETSI
 # Datenübertragungssysteme; „Multiple Gigabit WAS/RLAN Systems (MGWS)“).
 # https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Allgemeinzuteilungen/2011_08_MGWS_pdf.pdf
 
-country DE: DFS-ETSI
-	(2400 - 2483.5 @ 40), (100 mW)
-	(5150 - 5250 @ 80), (100 mW), NO-OUTDOOR, AUTO-BW
-	(5250 - 5350 @ 80), (100 mW), NO-OUTDOOR, DFS, AUTO-BW
-	(5470 - 5725 @ 160), (500 mW), DFS
-	# short range devices (ETSI EN 300 440-1)
-	(5725 - 5875 @ 80), (25 mW)
-	# 60 GHz band channels 1-4 (ETSI EN 302 567)
-	(57000 - 66000 @ 2160), (40)
+country DE:
+	(2402 - 2494 @ 40), (33)
+	(4910 - 6090 @ 40), (33)
 
 country DK: DFS-ETSI
 	(2402 - 2482 @ 40), (20)
@@ -439,13 +413,9 @@ country FR: DFS-ETSI
 	# 60 GHz band channels 1-4, ref: Etsi En 302 567
 	(57000 - 66000 @ 2160), (40)
 
-country GB: DFS-ETSI
-	(2402 - 2482 @ 40), (20)
-	(5170 - 5250 @ 80), (20), AUTO-BW
-	(5250 - 5330 @ 80), (20), DFS, AUTO-BW
-	(5490 - 5710 @ 160), (27), DFS
-	# 60 GHz band channels 1-4, ref: Etsi En 302 567
-	(57000 - 66000 @ 2160), (40)
+country GB:
+	(2402 - 2494 @ 40), (33)
+	(4910 - 6090 @ 40), (33)
 
 country GD: DFS-FCC
 	(2402 - 2472 @ 40), (30)
