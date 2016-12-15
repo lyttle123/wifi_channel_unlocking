@@ -55,7 +55,7 @@ mrproper: clean maintainer-clean
 
 regulatory.bin: db.txt $(REGDB_PRIVKEY) $(REGDB_PUBKEY)
 	@echo Generating $@ digitally signed by $(REGDB_AUTHOR)...
-	./db2bin.py regulatory.bin db.txt $(REGDB_PRIVKEY)
+	python2.7 db2bin.py regulatory.bin db.txt $(REGDB_PRIVKEY)
 
 sha1sum.txt: db.txt
 	sha1sum $< > $@
