@@ -29,7 +29,7 @@ I was not able to get the unload and loading of the cfg80211 module to work prop
 
 Once you have sucessfully loaded the new region you can run the followig commands to activate the new region, update txpower levels, or verify maximum allowed power levels:
 
-* `'iw reg set DE'` (sets the new region)
+* `'iw reg set BG'` (sets the new region)
 * `'iw list'` (verify enabled channels)
 * `'iwconfig <interface>'` (verify power level)
 * `'iwconfig <interface> txpower <new power level>'` (update power level)
